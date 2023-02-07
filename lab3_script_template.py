@@ -67,7 +67,32 @@ def process_sales_data(sales_csv, orders_dir):
         order_path = os.path.join(orders_dir, order_file_name)
         # Export the data to an Excel sheet
         sheetname = f'ORDER {order_id}'
-        order_df.to_excel(order_path, index=False, sheet_name=sheetname)
+
+        #Create a variable to write to Excel
+        writer = pandas.ExcelWriter(order_path, engine='xlsxwriter')
+        #Write to the actual file with the variable we created
+        order_df.to_excel(writer, index=False, sheet_name=sheetname)
+        #Create a variable to get the workbook in question
+        workbook  = writer.book
+        #Create a variable to get the sheets of said workbook, the name of the sheet was provided above
+        worksheet = writer.sheets[sheetname]
+
+        #This is the format that will be applied to the 5th and 6th columns of each spreadsheet
+        format = workbook.add_format({'num_format': '$0'})
+
+        #Set the columns to the width and heights (10x15)
+        worksheet.set_column(1, 10, 15)
+        worksheet.set_column(5, 6, 15, format) #Add the $ to each 5th and 6th column
+        writer.close() #And close the worksheet
+
+
+
+
+
+
+
+
+
         # TODO: Format the Excel sheet
         #print(order_df)
 
